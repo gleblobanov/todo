@@ -30,10 +30,17 @@ angular.module('nodeTodo', ['ngMaterial', 'datePicker', 'infinite-scroll'])
 
 
         $scope.createTodo = function () {
+
             $scope.formData.complete = false;
+
             $http.post('/api/v1/todos/',$scope.formData)
                 .success(function (data) {
-                    fillTodoData(data);
+                   data.forEach(function (item)
+                    {
+                        $scope.todoAll.unshift(item);
+                        $scope.formData.text = '';
+                        $scope.formData.date = '';
+                    })
                 })
                 .error(function (error) {
                 })
@@ -47,6 +54,7 @@ angular.module('nodeTodo', ['ngMaterial', 'datePicker', 'infinite-scroll'])
 
             $http.post('/api/v1/todos/complete/', { id: todoID, new_value: complete } )
                 .success(function (data) {
+
                 })
                 .error(function () {
                 })

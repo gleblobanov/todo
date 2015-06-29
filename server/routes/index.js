@@ -21,17 +21,19 @@ router.post('/api/v1/todos', function(req, res) {
     var data = {text: req.body.text, complete: req.body.complete, date: req.body.date};
 
     pg.connect(connectionString, function(err, client, done) {
-        client.query("INSERT INTO items (text, complete, date) VALUES ($1, $2, $3)", [data.text, data.complete, data.date]);
-        var query = client.query("SELECT * FROM items ORDER BY id ASC");
+        client.query("INSERT INTO items (text, complete, date) VALUES ($1, $2, $3) RETURNING id", [data.text, data.complete, data.date],
+            function (err, result1) {
+                if (err) {
 
-        query.on('row', function(row) {
-            results.push(row);
-        });
+                } else {
+                    client.query("SELECT * FROM items WHERE id = ($1)", [result1.rows[0].id], function (err, result2) {
+                        results.push(result2.rows[0]);
+                        client.end();
+                        return res.json(results);
+                    });
 
-        query.on('end', function () {
-           client.end();
-            return res.json(results);
-        });
+                }
+            });
 
         if (err) {
             console.log(err);
