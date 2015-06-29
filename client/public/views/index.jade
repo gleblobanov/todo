@@ -1,0 +1,52 @@
+extends layout
+
+block content
+  div(layout='row', layout-align='center center')
+      h1.md-display-3
+        | Gleb's To Do List
+  div(layout='row', layout-align='center center')
+    md-content(layout='row')
+      form(layout='row')
+          md-input-container
+            label Задача
+            input(ng-model='formData.text')
+          md-input-container
+            label Дата
+            input(ng-model="formData.date", type="datetime", date-time)
+          md-button.md-fab(aria-label='Add task', ng-click='createTodo()')
+            md-icon(md-svg-icon='../images/ic_add_48px.svg')
+
+  md-content.md-padding
+    md-tabs(md-dynamic-height='', md-border-bottom='')
+      md-tab(label='Все задачи')
+        md-content.md-padding
+            md-list
+                    md-list-item(ng-repeat='todo in todoAll')
+                        md-checkbox(ng-model='todo.complete', ng-click="completeTask(todo.id, todo.complete)")
+                        p
+                            | {{todo.text}} {{todo.id}} &mdash; {{todo.date | date:'MM-dd-yyyy в H:m'}}
+                        md-button.md-icon-button.md-secondary(aria-label='Delete task', ng-click="deleteTodo($index, todo.id)")
+                            md-icon(md-svg-icon='../images/ic_delete_48px.svg')
+      md-tab(label='В процессе')
+        md-content.md-padding
+          md-list
+                md-list-item(ng-repeat='todo in todoAll | filter:isCompleted(false)')
+                    md-checkbox(ng-model='todo.complete', ng-click="completeTask(todo.id, todo.complete)")
+                    p
+                        | {{todo.text}} {{todo.id}} &mdash; {{todo.date | date:'MM-dd-yyyy в H:m'}}
+                    md-button.md-icon-button.md-secondary(aria-label='Delete task', ng-click="deleteTodo($index, todo.id)")
+                        md-icon(md-svg-icon='../images/ic_delete_48px.svg')
+      md-tab(label='Решённые')
+        md-content.md-padding
+          md-list
+                md-list-item(ng-repeat='todo in todoAll | filter:isCompleted(true)')
+                    md-checkbox(ng-model='todo.complete', ng-click="completeTask(todo.id, todo.complete)")
+                    p
+                        | {{todo.text}} {{todo.id}} &mdash; {{todo.date | date:'MM-dd-yyyy в H:m'}}
+                    md-button.md-icon-button.md-secondary(aria-label='Delete task', ng-click="deleteTodo($index, todo.id)")
+                        md-icon(md-svg-icon='../images/ic_delete_48px.svg')
+
+  md-content(layout='row', layout-align='center center')
+      md-button(md-no-ink, class="md-primary", ng-click='loadMoreAll()')
+        | Загрузить ещё
+
