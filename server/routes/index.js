@@ -171,16 +171,6 @@ router.delete('/api/v1/todos/:todo_id', function (req, res) {
     });
 });
 
-function createTestData() {
-
-     pg.connect(connectionString, function(err, client, done) {
-
-        for(i = 0; i < 10000000; ++i){
-            client.query("INSERT INTO items (text, complete, date) VALUES ($1, $2, $3)", ['1', false, '2015-02-13 13:55:00+02']);
-        }
-
-    });
-}
 
 module.exports = router;
 
